@@ -60,6 +60,13 @@ def update_user(
 ):
     if current_user.id != user_id:
         raise HTTPException(
+            status_code=HTTPStatus.BAD_REQUEST, detail='not enough permissions'
+        )
+
+    db_user = session.scalar(select(User).where(User.id == user_id))
+
+    if db_user is None:
+        raise HTTPException(
             status_code=HTTPStatus.NOT_FOUND, detail='user not found'
         )
 
@@ -79,6 +86,13 @@ def delete_user(
     current_user: CurrentUser,
 ):
     if current_user.id != user_id:
+        raise HTTPException(
+            status_code=HTTPStatus.BAD_REQUEST, detail='not enough permissions'
+        )
+
+    db_user = session.scalar(select(User).where(User.id == user_id))
+
+    if db_user is None:
         raise HTTPException(
             status_code=HTTPStatus.NOT_FOUND, detail='user not found'
         )
